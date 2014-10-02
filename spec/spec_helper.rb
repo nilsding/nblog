@@ -22,5 +22,3 @@ RSpec.configure do |c|
   c.include RSpecMixin
   c.include Capybara::DSL
 end
-
-$config['dbfile'] = "test.db"
