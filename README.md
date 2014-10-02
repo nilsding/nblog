@@ -5,7 +5,7 @@ using Sinatra and SQLite3.
 
 ## Features
 
-* Simple to use
+* Easy to use
 * RSS-Feed of the posts
 * Include external CSS files
 
