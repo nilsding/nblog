@@ -1,0 +1,11 @@
+.right{style: "float: right;"}
+  %ul.nav
+    - if logged_in?
+      %li
+        %a{href: "/admin"} Admin
+      %li
+        %form{action: "/logout", method: "POST"}
+          %a{href: "#", onclick: "this.parentNode.submit()"} Logout
+    - else
+      %li
+        %a{href: "/login"} Login

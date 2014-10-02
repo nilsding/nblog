@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title><%= $config['title'] %></title>
+    <description><%= $config['description'] %></description>
+    <link>http://</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate><%= Time.now %></pubDate>
+    <lastBuildDate><%= Time.now %></lastBuildDate>
+    <generator><%= NBLOG_VERSION %></generator>
+<% for post in posts %>
+    <item>
+      <title><%= h post[:content] %></title>
+      <description><%= h post[:content] %></description>
+      <pubDate><%= post[:date] %></pubDate>
+      <link><%= post[:url] %></link>
+      <guid isPermalink="true"><%= post[:url] %></guid>
+    </item>
+<% end %>        

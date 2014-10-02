@@ -1,0 +1,12 @@
+%h2 Sign in
+- unless logged_in?
+  %form{method: "POST", action: url("/login")}
+    %input{type: "text", name: "name", placeholder: "User name"}
+    %br/
+    %input{type: "password", name: "passwd", placeholder: "Password"}
+    %br/
+    %button{type: "submit", name: "submit"} Sign in
+- else
+  %p You are already logged in!
+  %p
+    %a{href: url("/")} Back

@@ -1,0 +1,15 @@
+!!! 5
+%html
+  %head
+    %title nblog
+    %meta{"http-equiv" => "Content-Type", content: "text/html; charset=utf-8"}/
+    %link{rel: "stylesheet", href: stylesheet}/
+  %body
+    = haml :_nav
+    %h1= $config['title']
+    %i= $config['description']
+    - if @message
+      .alert= @message
+    = yield
+    %hr/
+    %i Powered by #{NBLOG_VERSION}

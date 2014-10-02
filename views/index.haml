@@ -1,0 +1,9 @@
+= haml :_compose
+
+%h2 Posts
+
+%ul
+  - for post in posts
+    %li
+      %a{href: post[:url]} [l]
+      = h post[:content]
