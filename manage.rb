@@ -44,7 +44,7 @@ def parse str
       puts "Usage: init"
       puts "Initializes the database for first use."
     when /^add-user$/i
-      puts "Usage: add-user [user-name]"
+      puts "Usage: add-user [user-name [password]]"
       puts "Adds a new user.\n"
       puts "Examples:\n  * add-user nilsding"
     when /^(exit|quit)$/i
@@ -88,21 +88,28 @@ def parse str
       puts e.backtrace.join "\n"
     end
   when /^add-user ?/i
-    args = str.sub /^add-user ?/i, ""
-    while args.empty?
-      args = ask("User name: ")
+    username = ""
+    passwd = ""
+    if str.match /^add-user ?(\S*)? ?(.*)?/i
+      username = $1
+      passwd = $2
     end
-    passwd = ask("<%= @key %>: ") do |q|
-      q.echo = false
-      q.verify_match = true
-      q.responses[:mismatch] = "Mismatch; try again"
-      q.responses[:ask_on_error] = ""
-      q.gather = { "Password" => '',
-                   "Retype password" => ''}
+    while username.empty?
+      username = ask("User name: ")
     end
-    print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Creating user #{args} with password \"<REDACTED>\""
+    if passwd.empty?
+      passwd = ask("<%= @key %>: ") do |q|
+        q.echo = false
+        q.verify_match = true
+        q.responses[:mismatch] = "Mismatch; try again"
+        q.responses[:ask_on_error] = ""
+        q.gather = { "Password" => '',
+                    "Retype password" => ''}
+      end
+    end
+    print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Creating user #{username} with password \"<REDACTED>\""
     begin
-      $db.execute("INSERT INTO users (screen_name, password_hashed) VALUES (?, ?);", [args, BCrypt::Password.create(passwd)])
+      $db.execute("INSERT INTO users (screen_name, password_hashed) VALUES (?, ?);", [username, BCrypt::Password.create(passwd)])
       puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
     rescue SQLite3::SQLException, SQLite3::ConstraintException => e
       case e.message
@@ -123,8 +130,10 @@ def parse str
   end
 end
 
-# pass = 
-
-repl
+if ARGV.empty?
+  repl
+else
+  parse ARGV * ' '
+end
 
 # kate: indent-width 2
