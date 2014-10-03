@@ -6,6 +6,8 @@ gem "haml"
 gem "bcrypt"
 gem "thin"
 gem "highline"
+gem "yard"
+gem "rake"
 gem "json"
 
 group :test do
