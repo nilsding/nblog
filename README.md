@@ -1,6 +1,6 @@
 # Yet another self-hosted microblogging thing!
 
-**nblog** is a self-hosted single-user microblogging software written in Ruby
+**nblog** is a self-hosted (single-user) microblogging software written in Ruby
 using Sinatra and SQLite3.
 
 ## Features
@@ -30,3 +30,4 @@ example configurations)
 * Write more tests
 * Pagination
 * Streaming API (maybe?)
+* add ability to subscribe to friends via RSS feeds
