@@ -8,6 +8,7 @@ require "sinatra"
 require "haml"
 require "yaml"
 require "json"
+require "redcarpet"
 
 # some YARD macros
 # @macro [attach] sinatra.get
@@ -24,6 +25,32 @@ $config = YAML.load_file File.expand_path(".", "config.yml")
 # SQLite3 database connection
 $db = SQLite3::Database.new File.expand_path(".", $config['dbfile'])
 # TODO: check if database was initialized
+
+# Redcarpet renderer for a Markdown output without headers.
+class HTMLwithoutHeaders < Redcarpet::Render::HTML
+  include Redcarpet::Render::SmartyPants
+  def header(text, header_level)
+    "<p>#{text}</p>"
+  end
+  def raw_html(raw_html)
+    Rack::Utils.escape_html raw_html
+  end
+end
+
+$markdown = Redcarpet::Markdown.new(HTMLwithoutHeaders,
+                                    no_intra_emphasis: true,
+                                    fenced_code_blocks: true,
+                                    strikethrough: true,
+                                    autolink: true,
+                                    filter_html: true,
+                                    tables: true)
+
+# Renders the page without the first <p> tag.
+def $markdown.render_(md)
+  retstr = self.render(md)
+  2.times { retstr.sub!(/<\/?p>/, '') }
+  retstr
+end
 
 use Rack::Session::Pool, expire_after: 2592000
 set :session_secret, $config['secret']
@@ -49,7 +76,7 @@ helpers do
     row = $db.execute("SELECT id, content, created_at FROM posts WHERE id=? LIMIT 1;", [id])[0]
     {
       "id" => row[0],
-      "content" => row[1],
+      "content" => $markdown.render_(row[1]),
       "date" => Time.at(row[2].to_i).strftime("%a, %d %b %Y %H:%M:%S %z"),
       "url" => "/p/#{row[0]}"
     }
@@ -61,7 +88,7 @@ helpers do
     $db.execute("SELECT id, content, created_at FROM posts ORDER BY id DESC LIMIT ?;", [$config['posts_per_page']]) do |row|
       posts << {
         id: row[0],
-        content: row[1],
+        content: $markdown.render_(row[1]),
         date: Time.at(row[2].to_i).strftime("%a, %d %b %Y %H:%M:%S %z"),
         url: "/p/#{row[0]}"
       }

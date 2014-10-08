@@ -7,6 +7,7 @@ gem "bcrypt"
 gem "thin"
 gem "highline"
 gem "yard"
+gem "redcarpet"
 gem "rake"
 gem "json"
 
