@@ -38,7 +38,7 @@ helpers do
   # @return Path to the stylesheet
   def stylesheet
     if params[:css]
-      session[:style] = h params[:css].strip
+      session[:style] = params[:css].gsub(/[\\<>&"']/, "").strip()
     end
     session[:style].nil? ? "/assets/style.css" : session[:style]
   end
