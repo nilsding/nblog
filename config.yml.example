@@ -1,3 +1,6 @@
+hostname: '127.0.0.1'
+port: 4567
+
 title: "nblog"
 description: "A small microblog running nblog"
 posts_per_page: 25

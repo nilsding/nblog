@@ -50,13 +50,16 @@ module NBlog
     use Rack::Session::Pool, expire_after: 2592000
     set :app_file, File.expand_path('../', __FILE__)
     set :session_secret, NBlog.config['secret']
-
+    set :bind, NBlog.config['hostname']
+    set :port, NBlog.config['port']
+    
     helpers do
       # 
       # @return +true+ or +false+, depending on whether an user is signed in
       def logged_in?
         !session[:user].nil?
       end
+      
       # Sets or unsets the user-defined style sheet.
       # @return Path to the stylesheet
       def stylesheet
@@ -65,6 +68,7 @@ module NBlog
         end
         session[:style].nil? ? "/assets/style.css" : session[:style]
       end
+      
       # Gets a post
       # @param id [Integer] The ID of the post to get.
       # @return A dict with the keys +:id+, +:content+, +:date+ and :+url+.
@@ -77,6 +81,7 @@ module NBlog
           "url" => "/p/#{row[0]}"
         }
       end
+      
       # Gets the most recent posts.
       # @return An array containing dicts with the keys +:id+, +:content+, +:date+ and :+url+.
       def posts
