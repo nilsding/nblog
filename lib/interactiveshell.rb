@@ -3,6 +3,7 @@ require "bcrypt"
 require "configuration"
 
 module NBlog
+  # Class to provide an interactive management shell.
   class InteractiveShell
     # The prompt to show at the REPL.
     PROMPT = "<%= color('nblog>', BOLD) %> "

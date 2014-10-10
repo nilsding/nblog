@@ -12,12 +12,7 @@ require "yaml"
 require "json"
 require "redcarpet"
 
-# some YARD macros
-# @macro [attach] sinatra.get
-# @overload get "$1"
-# @macro [attach] sinatra.post
-# @overload post "$1"
-
+# nblog main module.
 module NBlog
   
   # Redcarpet renderer for a Markdown output without headers.
@@ -46,6 +41,7 @@ module NBlog
     retstr
   end
   
+  # nblog Sinatra application.
   class Application < Sinatra::Base
     use Rack::Session::Pool, expire_after: 2592000
     set :app_file, File.expand_path('../', __FILE__)
@@ -109,6 +105,12 @@ module NBlog
       end
     end
 
+    # some YARD macros
+    # @macro [attach] sinatra.get
+    # @overload get "$1"
+    # @macro [attach] sinatra.post
+    # @overload post "$1"
+    
     # @method get_index
     # Gets the index page.
     get "/" do
