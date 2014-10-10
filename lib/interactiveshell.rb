@@ -88,14 +88,16 @@ module NBlog
         print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Initializing database..."
         begin
           NBlog::db.execute_batch <<-SQL
-            CREATE TABLE IF NOT EXISTS users (
+            DROP TABLE IF EXISTS users;
+            DROP TABLE IF EXISTS posts;
+            CREATE TABLE users (
               id INTEGER PRIMARY KEY,
               screen_name TEXT UNIQUE,
               password_hashed TEXT,
               can_post TEXT,
               is_admin TEXT
             );
-            CREATE TABLE IF NOT EXISTS posts (
+            CREATE TABLE posts (
               id INTEGER PRIMARY KEY,
               content TEXT,
               created_at TEXT
