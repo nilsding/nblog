@@ -1,13 +1,6 @@
 require "highline/import"
-require "sqlite3"
 require "bcrypt"
-require "yaml"
-
-# configuration
-$config ||= YAML.load_file File.expand_path(".", "config.yml")
-
-# SQLite3 database connection
-$db ||= SQLite3::Database.new File.expand_path(".", $config['dbfile'])
+require "configuration"
 
 module NBlog
   class InteractiveShell
@@ -53,10 +46,26 @@ module NBlog
         when /^init$/i
           puts "Usage: init"
           puts "Initializes the database for first use."
+          print "#{HighLine::color("This will reset the database!", HighLine::RED, HighLine::BOLD)}  "
+          puts "All your posts will be deleted, and the users"
+          puts "have to be recreated again.  To upgrade the database schema, take a look at"
+          puts "#{HighLine::color("update", HighLine::UNDERLINE)}."
+          puts "\n#{related_cmds %w(update)}"
+        when /^update|upgrade$/i
+          puts "Usage: update"
+          puts "Updates the database to a newer version."
+          puts "If you just initialized the database, it should be already the recent"
+          puts "version."
+          puts "\n#{related_cmds %w(init dbver)}"
+        when /^dbver$/
+          puts "Usage: dbver"
+          puts "Prints the current database schema version."
+          puts "\n#{related_cmds %w(update)}"
         when /^add-user$/i
           puts "Usage: add-user [user-name [password]]"
           puts "Adds a new user.\n"
           puts "Examples:\n  * add-user nilsding"
+          puts "\n#{related_cmds %w(edit-user del-user)}"
         when /^(exit|quit)$/i
           puts "Usage: #{$1}"
           puts "#{$1.capitalize}s the management shell."
@@ -78,7 +87,7 @@ module NBlog
       when /^init ?/i
         print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Initializing database..."
         begin
-          $db.execute_batch <<-SQL
+          NBlog::db.execute_batch <<-SQL
             CREATE TABLE IF NOT EXISTS users (
               id INTEGER PRIMARY KEY,
               screen_name TEXT UNIQUE,
@@ -119,7 +128,7 @@ module NBlog
         end
         print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Creating user #{username} with password \"<REDACTED>\""
         begin
-          $db.execute("INSERT INTO users (screen_name, password_hashed) VALUES (?, ?);", [username, BCrypt::Password.create(passwd)])
+          NBlog.db.execute("INSERT INTO users (screen_name, password_hashed) VALUES (?, ?);", [username, BCrypt::Password.create(passwd)])
           puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
         rescue SQLite3::SQLException, SQLite3::ConstraintException => e
           case e.message
@@ -139,6 +148,13 @@ module NBlog
         puts "Type \"help\" for a list of commands."
       end
     end
+    
+    private
+      # Returns a string containing the related commands.
+      # @param cmdlist [Array] The related commands.
+      def related_cmds(cmdlist)
+        "Related commands: #{cmdlist.map { |cmd| HighLine::color(cmd, HighLine::UNDERLINE) } * ' ' }"
+      end
   end
 end
 
