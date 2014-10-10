@@ -68,7 +68,11 @@ module NBlog
       # @return Path to the stylesheet
       def stylesheet
         if params[:css]
-          session[:style] = params[:css].gsub(/[\\<>&"']/, "").strip()
+          unless params[:css].strip().empty?
+            session[:style] = params[:css].gsub(/[\\<>&"']/, "").strip()
+          else
+            session[:style] = nil
+          end
         end
         session[:style].nil? ? "/assets/style.css" : session[:style]
       end
