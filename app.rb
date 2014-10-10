@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 # nblog - simple microblogging thing
 
-require "sqlite3"
+$:.unshift File.expand_path("../lib", __FILE__)
+
+require "configuration"
 require "bcrypt"
 require "sinatra"
 require "haml"
@@ -15,16 +17,6 @@ require "redcarpet"
 # @overload get "$1"
 # @macro [attach] sinatra.post
 # @overload post "$1"
-
-# nblog version string
-NBLOG_VERSION = "nblog 0.1.0"
-
-# configuration
-$config = YAML.load_file File.expand_path(".", "config.yml")
-
-# SQLite3 database connection
-$db = SQLite3::Database.new File.expand_path(".", $config['dbfile'])
-# TODO: check if database was initialized
 
 # Redcarpet renderer for a Markdown output without headers.
 class HTMLwithoutHeaders < Redcarpet::Render::HTML
@@ -53,7 +45,7 @@ def $markdown.render_(md)
 end
 
 use Rack::Session::Pool, expire_after: 2592000
-set :session_secret, $config['secret']
+set :session_secret, NBlog.config['secret']
 
 helpers do
   # 
@@ -73,7 +65,7 @@ helpers do
   # @param id [Integer] The ID of the post to get.
   # @return A dict with the keys +:id+, +:content+, +:date+ and :+url+.
   def post(id)
-    row = $db.execute("SELECT id, content, created_at FROM posts WHERE id=? LIMIT 1;", [id])[0]
+    row = NBlog.db.execute("SELECT id, content, created_at FROM posts WHERE id=? LIMIT 1;", [id])[0]
     {
       "id" => row[0],
       "content" => $markdown.render_(row[1]),
@@ -85,7 +77,7 @@ helpers do
   # @return An array containing dicts with the keys +:id+, +:content+, +:date+ and :+url+.
   def posts
     posts = []
-    $db.execute("SELECT id, content, created_at FROM posts ORDER BY id DESC LIMIT ?;", [$config['posts_per_page']]) do |row|
+    NBlog.db.execute("SELECT id, content, created_at FROM posts ORDER BY id DESC LIMIT ?;", [NBlog.config['posts_per_page']]) do |row|
       posts << {
         id: row[0],
         content: $markdown.render_(row[1]),
@@ -140,7 +132,7 @@ end
 # @method post_login
 # Creates a new session, if the username/password combination is correct.
 post "/login" do
-  $db.execute("SELECT screen_name, password_hashed FROM users WHERE lower(screen_name) = ?;", [params[:name].downcase]) do |row|
+  NBlog.db.execute("SELECT screen_name, password_hashed FROM users WHERE lower(screen_name) = ?;", [params[:name].downcase]) do |row|
     pass = BCrypt::Password.new(row[1])
     if pass == params[:passwd]
       session[:user] = row[0]
@@ -168,7 +160,7 @@ end
 post "/compose" do
   redirect(to('/')) unless logged_in?
   unless params[:text].empty?
-    $db.execute("INSERT INTO posts (content, created_at) VALUES (?, ?);", [params[:text].strip, Time.now.strftime("%s")])
+    NBlog.db.execute("INSERT INTO posts (content, created_at) VALUES (?, ?);", [params[:text].strip, Time.now.strftime("%s")])
     session[:flash] = "Successfully published post."
   else
     session[:flash] = "Post cannot be empty."

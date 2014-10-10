@@ -6,8 +6,8 @@
     %link{rel: "stylesheet", href: stylesheet}/
   %body
     = haml :_nav
-    %h1= $config['title']
-    %i= $config['description']
+    %h1= NBlog.config['title']
+    %i= NBlog.config['description']
     - if @message
       .alert= @message
     = yield

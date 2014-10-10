@@ -1,6 +1,9 @@
 require "sqlite3"
 require "yaml"
 
+# nblog version string
+NBLOG_VERSION = "nblog 0.1.0"
+
 module NBlog
   
   def self.config
@@ -17,4 +20,5 @@ module NBlog
 
     # SQLite3 database connection
     @@db ||= SQLite3::Database.new File.expand_path(".", @@config['dbfile'])
+    # TODO: check if database was initialized
 end
