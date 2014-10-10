@@ -31,4 +31,3 @@ example configurations)
 * Pagination
 * Streaming API (maybe?)
 * add ability to subscribe to friends via RSS feeds
-* restructorize files
