@@ -23,16 +23,32 @@ describe "nblog" do
   end
   
   context "user" do
+    session = Capybara::Session.new(:rack_test, NBlog::Application)
     it "should sign in" do
-      visit "/"
-      click_on "Login"
-      expect(page.current_url).to match(/\/login$/)
-      fill_in "User name", with: "nilsding"
-      fill_in "Password", with: "geheim"
-      click_button "Sign in"
+      session.visit "/"
+      session.click_on "Login"
+      expect(session.current_url).to match(/\/login$/)
+      session.fill_in "User name", with: "test"
+      session.fill_in "Password", with: "secret"
+      session.click_button "Sign in"
       
-      expect(page.current_url).to match(/\/$/)
-      expect(page).to have_content("Successfully logged in")
+      expect(session.current_url).to match(/\/$/)
+      expect(session).to have_content("Successfully logged in")
+    end
+    
+    it "should stay signed in" do
+      session.visit "/"
+      expect(session).to have_content("Logout")
+    end
+    
+    it "should publish a new post" do
+      text = "This is an example text."
+      
+      session.visit "/"
+      session.fill_in "What's happening?", with: text
+      session.click_button "Publish"
+      
+      expect(session).to have_content("[l] #{text}")
     end
   end
 end
