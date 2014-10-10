@@ -53,6 +53,10 @@ module NBlog
     set :bind, NBlog.config['hostname']
     set :port, NBlog.config['port']
     
+    not_found do
+      haml :error_404
+    end
+    
     helpers do
       # 
       # @return +true+ or +false+, depending on whether an user is signed in
