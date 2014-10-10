@@ -6,7 +6,7 @@ describe "nblog" do
     expect(page.status_code).to be(200)
   end
   
-  it "should not be able to access the logout page via GET" do
+  it "should forbid the logout page via GET" do
     visit "/logout"
     expect(page.status_code).to be(403)
   end
@@ -20,6 +20,20 @@ describe "nblog" do
     
     visit "/?css=%20%20%20%20"
     expect(page).to have_xpath("//link[@rel='stylesheet' and @href='/assets/style.css']")
+  end
+  
+  context "user" do
+    it "should sign in" do
+      visit "/"
+      click_on "Login"
+      expect(page.current_url).to match(/\/login$/)
+      fill_in "User name", with: "nilsding"
+      fill_in "Password", with: "geheim"
+      click_button "Sign in"
+      
+      expect(page.current_url).to match(/\/$/)
+      expect(page).to have_content("Successfully logged in")
+    end
   end
 end
 
