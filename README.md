@@ -21,7 +21,7 @@ using Sinatra and SQLite3.
 2. Initialize the database: `ruby manage.rb init`
 3. Create a new user: `ruby manage.rb add-user _username_`.  You will be
 prompted to enter a password.
-4. Run the application: `./app.rb -p _port_ -e production`
+4. Run the application: `RACK_ENV=production ./app.rb`
 5. Configure your webserver (take a look at the `misc/` directory for some
 example configurations)
 
