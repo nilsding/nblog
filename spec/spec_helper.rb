@@ -4,7 +4,7 @@ require "capybara/dsl"
 # require "capybara/rspec"
 require "rack/test"
 
-require File.expand_path "../../app.rb", __FILE__
+require File.expand_path "../../lib/application", __FILE__
 
 ENV['RACK_ENV'] = 'test'
 
@@ -12,11 +12,11 @@ module RSpecMixin
   include Rack::Test::Methods
   
   def app
-    Sinatra::Application
+    NBlog::Application
   end
 end
 
-Capybara.app = Sinatra::Application
+Capybara.app = NBlog::Application
 
 RSpec.configure do |c| 
   c.include RSpecMixin
