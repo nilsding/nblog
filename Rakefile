@@ -8,5 +8,5 @@ RSpec::Core::RakeTask.new do |task|
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.files   = ['app.rb', '-', '*.md']
+  t.files   = ['*.rb', 'lib/*.rb', '-', '*.md']
 end
