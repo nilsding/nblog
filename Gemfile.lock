@@ -61,6 +61,7 @@ DEPENDENCIES
   haml
   highline
   json
+  rack-test
   rake
   redcarpet
   rspec
