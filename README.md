@@ -17,17 +17,29 @@ using Sinatra and SQLite3.
 
 ## Installation
 
+### Production
+
+1. Install the dependencies: `bundle install --without test development`
+2. Initialize the database: `ruby manage.rb init`
+3. Create a new user: `ruby manage.rb add-user _username_`.  You will be
+prompted to enter a password.
+4. Run the application, either with `RACK_ENV=production ./app.rb` or with
+`unicorn -p PORT -e production`, depending on what you prefer.
+5. Configure your webserver (take a look at the `misc/` directory for some
+example configurations)
+
+### Development
+
 1. Install the dependencies: `bundle install`
 2. Initialize the database: `ruby manage.rb init`
 3. Create a new user: `ruby manage.rb add-user _username_`.  You will be
 prompted to enter a password.
-4. Run the application: `RACK_ENV=production ./app.rb`
-5. Configure your webserver (take a look at the `misc/` directory for some
-example configurations)
+4. Run the application: `shotgun`
 
 ## Personal TODO list
 
 * Write more tests
 * Pagination
+* grouping by month
 * Streaming API (maybe?)
 * add ability to subscribe to friends via RSS feeds
