@@ -3,5 +3,6 @@ config.yml
 doc/
 .yardoc/
 *.swp
+*.kate-swp
 *~
 .bundle/
