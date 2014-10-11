@@ -1,0 +1,11 @@
+article {
+  display: inline;
+}
+.centre {
+  text-align: center;
+}
+.alert {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  background-color: rgba(1, 0, 0, 0.2);
+}

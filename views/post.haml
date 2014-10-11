@@ -5,7 +5,9 @@
 %ul
   %li
     %a{href: @p["url"]} [l]
-    = @p["content"]
+    %article= @p["content"]
 
-.centre{style: "text-align: center;"}
-  %a{href: url("/")} Go back
+.centre
+  %p= @p["date"].methods
+  %p
+    %a{href: url("/")} Go back
