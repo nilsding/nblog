@@ -4,6 +4,12 @@
 
 $:.unshift File.expand_path("../lib", __FILE__)
 
+class Time
+  def to_rfc822
+    self.strftime("%a, %d %b %Y %H:%M:%S %z")
+  end
+end
+
 require "configuration"
 require "bcrypt"
 require "sinatra/base"
@@ -81,7 +87,7 @@ module NBlog
         {
           "id" => row[0],
           "content" => $markdown.render_(row[1]),
-          "date" => Time.at(row[2].to_i).strftime("%a, %d %b %Y %H:%M:%S %z"),
+          "date" => Time.at(row[2].to_i),
           "url" => "/p/#{row[0]}"
         }
       end
@@ -94,7 +100,7 @@ module NBlog
           posts << {
             id: row[0],
             content: $markdown.render_(row[1]),
-            date: Time.at(row[2].to_i).strftime("%a, %d %b %Y %H:%M:%S %z"),
+            date: Time.at(row[2].to_i),
             url: "/p/#{row[0]}"
           }
         end
@@ -102,6 +108,9 @@ module NBlog
       end
       def h(text)
         Rack::Utils.escape_html(text)
+      end
+      def strip_tags(text)
+        text.gsub(/\<.+\>(.*)\<\/.+\>/, '\1')
       end
     end
 

@@ -3,17 +3,19 @@
   <channel>
     <title><%= NBlog.config['title'] %></title>
     <description><%= NBlog.config['description'] %></description>
-    <link>http://</link>
-    <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate><%= Time.now %></pubDate>
-    <lastBuildDate><%= Time.now %></lastBuildDate>
+    <link><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}" %></link>
+    <atom:link href="<%= request.url %>" rel="self" type="application/rss+xml" />
+    <pubDate><%= Time.now.to_rfc822 %></pubDate>
+    <lastBuildDate><%= Time.now.to_rfc822 %></lastBuildDate>
     <generator><%= NBLOG_VERSION %></generator>
 <% for post in posts %>
     <item>
-      <title><![CDATA[<%= post[:content] %>]]></title>
+      <title><%= strip_tags post[:content].split("\n")[0] %></title>
         <description><![CDATA[<%= post[:content] %>]]></description>
-      <pubDate><%= post[:date] %></pubDate>
-      <link><%= post[:url] %></link>
-      <guid isPermalink="true"><%= post[:url] %></guid>
+      <pubDate><%= post[:date].to_rfc822 %></pubDate>
+      <link><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}#{post[:url]}" %></link>
+      <guid isPermalink="true"><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}#{post[:url]}" %></guid>
     </item>
-<% end %>        
+<% end %>
+  </channel>
+</rss>
