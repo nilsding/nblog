@@ -11,6 +11,14 @@ gem "redcarpet"
 gem "rake"
 gem "json"
 
+group :development do
+  gem "shotgun"
+end
+
+group :production do
+  gem "unicorn"
+end
+
 group :test do
   gem "rspec"
   gem "rack-test"
