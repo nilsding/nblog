@@ -4,12 +4,6 @@
 
 $:.unshift File.expand_path("../lib", __FILE__)
 
-class Time
-  def to_rfc822
-    self.strftime("%a, %d %b %Y %H:%M:%S %z")
-  end
-end
-
 require "configuration"
 require "bcrypt"
 require "sinatra/base"
@@ -105,6 +99,8 @@ module NBlog
           }
         end
         posts
+      end
+      def group_per_day(posts)
       end
       def h(text)
         Rack::Utils.escape_html(text)

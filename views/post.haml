@@ -8,6 +8,6 @@
     %article= @p["content"]
 
 .centre
-  %p= @p["date"].methods
+  %p= Posted at: @p["date"].rfc822
   %p
     %a{href: url("/")} Go back
