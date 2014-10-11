@@ -16,9 +16,9 @@ module NBlog
   
   private
     # configuration
-    @@config ||= YAML.load_file File.expand_path(".", "config.yml")
+    @@config ||= YAML.load_file File.expand_path("../../config.yml", __FILE__)
 
     # SQLite3 database connection
-    @@db ||= SQLite3::Database.new ENV['RACK_ENV'] == "test" ? ":memory:" : File.expand_path(".", @@config['dbfile'])
+    @@db ||= SQLite3::Database.new ENV['RACK_ENV'] == "test" ? ":memory:" : File.expand_path("../../#{@@config['dbfile']}", __FILE__)
     # TODO: check if database was initialized
 end
