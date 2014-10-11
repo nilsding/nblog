@@ -77,13 +77,22 @@ module NBlog
       # @param id [Integer] The ID of the post to get.
       # @return A dict with the keys +:id+, +:content+, +:date+ and :+url+.
       def post(id)
-        row = NBlog.db.execute("SELECT id, content, created_at FROM posts WHERE id=? LIMIT 1;", [id])[0]
-        {
-          "id" => row[0],
-          "content" => $markdown.render_(row[1]),
-          "date" => Time.at(row[2].to_i),
-          "url" => "/p/#{row[0]}"
-        }
+        begin
+          row = NBlog.db.execute("SELECT id, content, created_at FROM posts WHERE id=? LIMIT 1;", [id])[0]
+          {
+            "id" => row[0],
+            "content" => $markdown.render_(row[1]),
+            "date" => Time.at(row[2]),
+            "url" => "/p/#{row[0]}"
+          }
+        rescue NoMethodError
+          {
+            "id" => -1,
+            "content" => nil,
+            "date" => Time.at(0),
+            "url" => "/p/#{id}"
+          }
+        end
       end
       
       # Gets the most recent posts.
@@ -94,7 +103,7 @@ module NBlog
           posts << {
             id: row[0],
             content: $markdown.render_(row[1]),
-            date: Time.at(row[2].to_i),
+            date: Time.at(row[2]),
             url: "/p/#{row[0]}"
           }
         end
@@ -156,10 +165,10 @@ module NBlog
     # @method post_login
     # Creates a new session, if the username/password combination is correct.
     post "/login" do
-      NBlog.db.execute("SELECT screen_name, password_hashed FROM users WHERE lower(screen_name) = ?;", [params[:name].downcase]) do |row|
-        pass = BCrypt::Password.new(row[1])
+      NBlog.db.execute("SELECT id, screen_name, password_hashed FROM users WHERE lower(screen_name) = ?;", [params[:name].downcase]) do |row|
+        pass = BCrypt::Password.new(row[2])
         if pass == params[:passwd]
-          session[:user] = row[0]
+          session[:user] = { id: row[0], screen_name: row[1] }
           session[:flash] = "Successfully logged in."
           redirect(to('/'))
         end
@@ -184,7 +193,7 @@ module NBlog
     post "/compose" do
       redirect(to('/')) unless logged_in?
       unless params[:text].empty?
-        NBlog.db.execute("INSERT INTO posts (content, created_at) VALUES (?, ?);", [params[:text].strip, Time.now.strftime("%s")])
+        NBlog.db.execute("INSERT INTO posts (content, created_at, created_by) VALUES (?, ?, ?);", [params[:text].strip, Time.now.strftime("%s"), session[:user][:id]])
         session[:flash] = "Successfully published post."
       else
         session[:flash] = "Post cannot be empty."
@@ -201,7 +210,7 @@ module NBlog
     # @method get_admin
     # Gets the administration panel.
     get "/admin" do
-      
+      haml :error_404
     end
 
     # @method get_about

@@ -12,4 +12,6 @@
       .alert= @message
     = yield
     %hr/
-    %i Powered by #{NBLOG_VERSION}
+    %i
+      Powered by #{NBLOG_VERSION}
+      %a.right{href: url("/about")} About this site

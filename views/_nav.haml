@@ -1,4 +1,4 @@
-.right{style: "float: right;"}
+.right
   %a{href: "/feed.xml"} RSS
   |
   - if logged_in?
@@ -6,5 +6,8 @@
     |
     %form{action: "/logout", method: "POST", style: "display: inline"}
       %a{href: "#", onclick: "this.parentNode.submit()"} Logout
+    %br/
+    Logged in as
+    %strong= session[:user][:screen_name]
   - else
     %a{href: "/login"} Login

@@ -81,7 +81,11 @@ module NBlog
           puts "Views help about certain commands."
           puts "Available commands:"
           puts "  - init"
+          puts "  - update"
+          puts "  - dbver"
           puts "  - add-user"
+          puts "  - edit-user"
+          puts "  - del-user"
           puts "  - exit"
           puts "  - help\n"
           puts "Example usage:\n  help add-user"
@@ -90,8 +94,13 @@ module NBlog
         print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Initializing database..."
         begin
           NBlog::db.execute_batch <<-SQL
+            DROP TABLE IF EXISTS db_info;
             DROP TABLE IF EXISTS users;
             DROP TABLE IF EXISTS posts;
+            CREATE TABLE db_info (
+              key VARCHAR(20) PRIMARY KEY,
+              value TEXT
+            );
             CREATE TABLE users (
               id INTEGER PRIMARY KEY,
               screen_name TEXT UNIQUE,
@@ -102,14 +111,18 @@ module NBlog
             CREATE TABLE posts (
               id INTEGER PRIMARY KEY,
               content TEXT,
-              created_at TEXT
+              created_by INTEGER,
+              created_at NUMERIC
             );
+            INSERT INTO db_info (key, value) VALUES ("version", "0");
           SQL
           puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
         rescue SQLite3::SQLException => e
           puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
           puts e.backtrace.join "\n"
         end
+      when /^dbver ?/i
+        puts "Database version " + NBlog.db.execute("SELECT value FROM db_info WHERE key=? LIMIT 1;", ["version"])[0][0]
       when /^add-user ?/i
         username = ""
         passwd = ""
@@ -132,7 +145,7 @@ module NBlog
         end
         print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Creating user #{username} with password \"<REDACTED>\""
         begin
-          NBlog.db.execute("INSERT INTO users (screen_name, password_hashed) VALUES (?, ?);", [username, BCrypt::Password.create(passwd)])
+          NBlog.db.execute("INSERT INTO users (screen_name, password_hashed, can_post, is_admin) VALUES (?, ?, ?, ?);", [username, BCrypt::Password.create(passwd), 't', 't'])
           puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
         rescue SQLite3::SQLException, SQLite3::ConstraintException => e
           case e.message
@@ -144,6 +157,8 @@ module NBlog
           puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
           puts e.backtrace.join "\n"
         end
+      when /^((edit|del)-user)|(update) ?/i
+        puts "This method is not implemented yet."
       when /^(exit|quit) ?/i
         exit 0
       when /^#/ # comments!
