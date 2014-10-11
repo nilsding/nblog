@@ -1,13 +1,17 @@
 # Yet another self-hosted microblogging thing!
 
-**nblog** is a self-hosted (single-user) microblogging software written in Ruby
-using Sinatra and SQLite3.
+[![build status](https://ci.rrerr.net/projects/2/status.png?ref=master)](https://ci.rrerr.net/projects/2?ref=master)
+
+**nblog** is a self-hosted microblogging software written in Ruby using Sinatra
+and SQLite3.
 
 ## Features
 
 * Easy to use
 * RSS-Feed of the posts
-* Include external CSS files
+* Posts can be written in Markdown
+* Include external CSS files (append `?css=http://path/to/stylesheet.css` to
+the URL to apply)
 
 ## Requirements
 
@@ -38,7 +42,6 @@ prompted to enter a password.
 
 ## Personal TODO list
 
-* Write more tests
 * Pagination
 * grouping by month
 * Streaming API (maybe?)
