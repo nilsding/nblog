@@ -15,8 +15,8 @@ require "redcarpet"
 # nblog main module.
 module NBlog
   
-  # Redcarpet renderer for a Markdown output without headers.
-  class HTMLwithoutHeaders < Redcarpet::Render::HTML
+  # Redcarpet HTML renderer for NBlog.
+  class NBlogRenderer < Redcarpet::Render::HTML
     include Redcarpet::Render::SmartyPants
     def header(text, header_level)
       "<p>#{text}</p>"
@@ -26,7 +26,7 @@ module NBlog
     end
   end
 
-  $markdown = Redcarpet::Markdown.new(HTMLwithoutHeaders,
+  $markdown = Redcarpet::Markdown.new(NBlogRenderer,
                                       no_intra_emphasis: true,
                                       fenced_code_blocks: true,
                                       strikethrough: true,
