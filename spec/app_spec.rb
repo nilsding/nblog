@@ -24,6 +24,18 @@ describe "nblog" do
   
   context "user" do
     session = Capybara::Session.new(:rack_test, NBlog::Application)
+    it "should not sign in with wrong username/password combination" do
+      session.visit "/"
+      session.click_on "Login"
+      expect(session.current_url).to match(/\/login$/)
+      session.fill_in "User name", with: "EpicLPer"
+      session.fill_in "Password", with: "horsehorsehorse"
+      session.click_button "Sign in"
+      
+      expect(session.current_url).to match(/\/login$/)
+      expect(session).to have_content("Wrong user")
+    end
+    
     it "should sign in" do
       session.visit "/"
       session.click_on "Login"
