@@ -46,3 +46,4 @@ prompted to enter a password.
 * grouping by month
 * Streaming API (maybe?)
 * add ability to subscribe to friends via RSS feeds
+* Database migration
