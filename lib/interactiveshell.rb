@@ -7,12 +7,13 @@ module NBlog
   class InteractiveShell
     # The prompt to show at the REPL.
     PROMPT = "<%= color('nblog>', BOLD) %> "
-
+    
     ##
     # Initializes the InteractiveShell
     # @param args [Array] Command-line arguments
-    def initialize(args)
-      if args.empty?
+    # @param run_repl [Boolean] Start the REPL if no command line arguments are given
+    def initialize(args, run_repl=true)
+      if args.empty? and run_repl
         repl
       else
         parse args * ' '
