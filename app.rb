@@ -6,4 +6,4 @@ $:.unshift File.expand_path("../lib", __FILE__)
 
 require "application"
 
-NBlog::Application.run!
+NBlog::Application.run! if __FILE__ == $0
