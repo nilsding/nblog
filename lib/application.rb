@@ -17,7 +17,6 @@ module NBlog
   
   # Redcarpet HTML renderer for NBlog.
   class NBlogRenderer < Redcarpet::Render::HTML
-    include Redcarpet::Render::SmartyPants
     def header(text, header_level)
       "<p>#{text}</p>"
     end
