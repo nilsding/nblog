@@ -157,7 +157,24 @@ module NBlog
           puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
           puts e.backtrace.join "\n"
         end
-      when /^((edit|del)-user)|(update) ?/i
+      when /^del-user ?/i
+        username = ""
+        username = $1 if str.match /^del-user ?(\S*)?/i
+        username = ask("User name: ") while username.empty?
+        # TODO: ask if the user should be really deleted
+        print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Deleting user #{username}"
+        begin
+          NBlog.db.execute("DELETE FROM users WHERE screen_name=?;", [username])
+          puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
+        rescue SQLite3::SQLException => e
+          case e.message
+          when /^no such table/i
+            e.message << " (this is usually fixed by running \"init\" first)"
+          end
+          puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
+          puts e.backtrace.join "\n"
+        end
+      when /^(edit-user|update) ?/i
         puts "This method is not implemented yet."
       when /^(exit|quit) ?/i
         exit 0
