@@ -98,13 +98,8 @@ module NBlog
       # @return An array containing dicts with the keys +:id+, +:content+, +:date+ and :+url+.
       def posts
         posts = []
-        NBlog.db.execute("SELECT id, content, created_at FROM posts ORDER BY id DESC LIMIT ?;", [NBlog.config['posts_per_page']]) do |row|
-          posts << {
-            id: row[0],
-            content: $markdown.render_(row[1]),
-            date: Time.at(row[2]),
-            url: "/p/#{row[0]}"
-          }
+        NBlog.db.execute("SELECT id FROM posts ORDER BY id DESC LIMIT ?;", [NBlog.config['posts_per_page']]) do |row|
+          posts << post(row[0])
         end
         posts
       end
