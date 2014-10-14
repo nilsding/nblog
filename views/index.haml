@@ -5,5 +5,8 @@
 %ul
   - for post in posts
     %li
-      %a{href: post["url"]} [l]
+      %span.controls
+        - if !session[:user].nil? and post["created_by"] == session[:user][:id]
+          %a{href: post["url"] + "/edit"} [e]
+        %a{href: post["url"]} [l]
       = post["content"]

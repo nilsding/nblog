@@ -62,6 +62,22 @@ describe "nblog" do
       
       expect(session).to have_content("[l] #{text}")
     end
+    
+    it "should edit a new post" do
+      text = "This is an example text."
+      updated_text = "This is an example text that was updated."
+      
+      session.visit "/"
+      session.click_link "[e]"
+      
+      expect(session.current_url).to match(/\/edit$/)
+      expect(session).to have_content(text)
+      session.fill_in "What's happening?", with: updated_text
+      session.click_button "Update"
+      
+      session.visit "/"
+      expect(session).to have_content("[l] #{updated_text}")
+    end
   end
 end
 

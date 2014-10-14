@@ -4,7 +4,10 @@
 
 %ul
   %li
-    %a{href: @p["url"]} [l]
+    %span.controls
+      - if !session[:user].nil? and @p["created_by"] == session[:user][:id]
+        %a{href: @p["url"] + "/edit"} [e]
+      %a{href: @p["url"]} [l]
     %article<= @p["content"]
 
 .centre

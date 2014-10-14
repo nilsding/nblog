@@ -74,22 +74,25 @@ module NBlog
       
       # Gets a post
       # @param id [Integer] The ID of the post to get.
-      # @return A dict with the keys +:id+, +:content+, +:date+ and :+url+.
+      # @return [Hash] containing keys +"id"+, +"content"+, +"content_md"+, +"date"+, +"url"+ and +"created_by"+.
       def post(id)
         begin
-          row = NBlog.db.execute("SELECT id, content, created_at FROM posts WHERE id=? LIMIT 1;", [id])[0]
+          row = NBlog.db.execute("SELECT id, content, created_at, created_by FROM posts WHERE id=? LIMIT 1;", [id])[0]
           {
             "id" => row[0],
             "content" => $markdown.render_(row[1]),
+            "content_md" => row[1],
             "date" => Time.at(row[2]),
-            "url" => "/p/#{row[0]}"
+            "url" => "/p/#{row[0]}",
+            "created_by" => row[3]
           }
         rescue NoMethodError
           {
             "id" => -1,
             "content" => nil,
             "date" => Time.at(0),
-            "url" => "/p/#{id}"
+            "url" => "/p/#{id}",
+            "created_by" => row[3]
           }
         end
       end
@@ -143,6 +146,29 @@ module NBlog
         end
       end
       haml :post
+    end
+    
+    # @method get_post_edit
+    # Edits a post.
+    get "/p/:id/edit" do
+      redirect(to('/')) unless logged_in?
+      unless session[:flash].nil?
+        @message = session[:flash]
+        session[:flash] = nil
+      end
+      @p = post params[:id]
+      haml :edit
+    end
+    
+    post '/update' do
+      redirect(to('/')) unless logged_in?
+      unless params[:text].empty? or params[:post_id].empty?
+        NBlog.db.execute("UPDATE posts SET content=? WHERE id=?;", [params[:text].strip, params[:post_id]])
+        session[:flash] = "Successfully updated post."
+      else
+        session[:flash] = "Post cannot be empty."
+      end
+      redirect back
     end
 
     # @method get_login

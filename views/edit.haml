@@ -1,0 +1,11 @@
+%h2 Edit post
+
+%form{action: "/update", method: "POST"}
+  %textarea{name: "text", placeholder: "What's happening?", rows: 2, cols: 40}= @p["content_md"]
+  %br/
+  %input{type: "hidden", name: "post_id", value: @p["id"]}
+  %button{type: "submit"} Update
+
+.centre
+  %p
+    %a{href: url("/")} Go back
