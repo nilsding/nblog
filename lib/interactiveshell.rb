@@ -91,36 +91,29 @@ module NBlog
           puts "Example usage:\n  help add-user"
         end
       when /^init ?/i
-        print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Initializing database..."
-        begin
-          NBlog::db.execute_batch <<-SQL
-            DROP TABLE IF EXISTS db_info;
-            DROP TABLE IF EXISTS users;
-            DROP TABLE IF EXISTS posts;
-            CREATE TABLE db_info (
-              key VARCHAR(20) PRIMARY KEY,
-              value TEXT
-            );
-            CREATE TABLE users (
-              id INTEGER PRIMARY KEY,
-              screen_name TEXT UNIQUE,
-              password_hashed TEXT,
-              can_post TEXT,
-              is_admin TEXT
-            );
-            CREATE TABLE posts (
-              id INTEGER PRIMARY KEY,
-              content TEXT,
-              created_by INTEGER,
-              created_at NUMERIC
-            );
-            INSERT INTO db_info (key, value) VALUES ("version", "0");
-          SQL
-          puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
-        rescue SQLite3::SQLException => e
-          puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
-          puts e.backtrace.join "\n"
-        end
+        run_sql("
+          DROP TABLE IF EXISTS db_info;
+          DROP TABLE IF EXISTS users;
+          DROP TABLE IF EXISTS posts;
+          CREATE TABLE db_info (
+            key VARCHAR(20) PRIMARY KEY,
+            value TEXT
+          );
+          CREATE TABLE users (
+            id INTEGER PRIMARY KEY,
+            screen_name TEXT UNIQUE,
+            password_hashed TEXT,
+            can_post TEXT,
+            is_admin TEXT
+          );
+          CREATE TABLE posts (
+            id INTEGER PRIMARY KEY,
+            content TEXT,
+            created_by INTEGER,
+            created_at NUMERIC
+          );
+          INSERT INTO db_info (key, value) VALUES (\"version\", \"0\");
+        ", [], "Initializing database", true)
       when /^dbver ?/i
         puts "Database version " + NBlog.db.execute("SELECT value FROM db_info WHERE key=? LIMIT 1;", ["version"])[0][0]
       when /^add-user ?/i
@@ -143,37 +136,15 @@ module NBlog
                         "Retype password" => ''}
           end
         end
-        print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Creating user #{username} with password \"<REDACTED>\""
-        begin
-          NBlog.db.execute("INSERT INTO users (screen_name, password_hashed, can_post, is_admin) VALUES (?, ?, ?, ?);", [username, BCrypt::Password.create(passwd), 't', 't'])
-          puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
-        rescue SQLite3::SQLException, SQLite3::ConstraintException => e
-          case e.message
-          when /^no such table/i
-            e.message << " (this is usually fixed by running \"init\" first)"
-          when /^unique constraint failed/i
-            e.message << " (the user already exists)"
-          end
-          puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
-          puts e.backtrace.join "\n"
-        end
+        run_sql("INSERT INTO users (screen_name, password_hashed, can_post, is_admin) VALUES (?, ?, ?, ?);", [username, BCrypt::Password.create(passwd), 't', 't'],
+                "Creating user #{username}")
       when /^del-user ?/i
         username = ""
         username = $1 if str.match /^del-user ?(\S*)?/i
         username = ask("User name: ") while username.empty?
         # TODO: ask if the user should be really deleted
-        print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] Deleting user #{username}"
-        begin
-          NBlog.db.execute("DELETE FROM users WHERE screen_name=?;", [username])
-          puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
-        rescue SQLite3::SQLException => e
-          case e.message
-          when /^no such table/i
-            e.message << " (this is usually fixed by running \"init\" first)"
-          end
-          puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
-          puts e.backtrace.join "\n"
-        end
+        run_sql("DELETE FROM users WHERE screen_name=?;", [username],
+                "Deleting user #{username}")
       when /^(edit-user|update) ?/i
         puts "This method is not implemented yet."
       when /^(exit|quit) ?/i
@@ -190,6 +161,32 @@ module NBlog
       # @param cmdlist [Array] The related commands.
       def related_cmds(cmdlist)
         "Related commands: #{cmdlist.map { |cmd| HighLine::color(cmd, HighLine::UNDERLINE) } * ' ' }"
+      end
+      
+      # Executes the given SQL statement, printing out a message to the console.
+      # @param sql [String] The SQL statement to use.
+      # @param bind_vars [Array] 
+      # @param message [String] The message to print.
+      # @param batch [Boolean] Use SQLite3's +execute_batch+ method.
+      def run_sql(sql, bind_vars=[], message="SQL", batch=false)
+        print "[#{HighLine::color(' -> ', HighLine::YELLOW)}] #{message}"
+        begin
+          if batch
+            NBlog.db.execute_batch(sql, bind_vars)
+          else
+            NBlog.db.execute(sql, bind_vars)
+          end
+          puts "\r[#{HighLine::color(' ok ', HighLine::GREEN)}]"
+        rescue SQLite3::SQLException, SQLite3::ConstraintException => e
+          case e.message
+          when /^no such table/i
+            e.message << " (this is usually fixed by running \"init\" first)"
+          when /^unique constraint failed/i
+            e.message << " (the user already exists)"
+          end
+          puts "\r[#{HighLine::color('fail', HighLine::RED)}]\n#{e.message}"
+          puts e.backtrace.join "\n"
+        end
       end
   end
 end
