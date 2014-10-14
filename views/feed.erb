@@ -10,11 +10,11 @@
     <generator><%= NBLOG_VERSION %></generator>
 <% for post in posts %>
     <item>
-      <title><%= strip_tags post[:content].split("\n")[0] %></title>
-        <description><![CDATA[<%= post[:content] %>]]></description>
-      <pubDate><%= post[:date].rfc822 %></pubDate>
-      <link><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}#{post[:url]}" %></link>
-      <guid isPermalink="true"><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}#{post[:url]}" %></guid>
+      <title><%= strip_tags post["content"].split("\n")[0] %></title>
+        <description><![CDATA[<%= post["content"] %>]]></description>
+      <pubDate><%= post["date"].rfc822 %></pubDate>
+      <link><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}#{post["url"]}" %></link>
+      <guid isPermalink="true"><%= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}#{post["url"]}" %></guid>
     </item>
 <% end %>
   </channel>
