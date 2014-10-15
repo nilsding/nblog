@@ -2,8 +2,8 @@
 
 %h2 View post
 
-%ul
-  %li
+%ul.posts
+  %li.post
     %span.controls
       - if !session[:user].nil? and @p["created_by"] == session[:user][:id]
         %a{href: @p["url"] + "/edit"} [e]
