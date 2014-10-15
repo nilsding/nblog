@@ -1,0 +1,11 @@
+0.1.2 (???)
+  * fixed RSS feed
+  + added classes to some elements to make creating stylesheets a bit easier
+
+0.1.1 (2014-10-12)
+  + delete users via manage.rb
+  + editing posts works now
+
+0.1.0 (2014-10-11)
+  * initial release
+  * basic features (create new posts, RSS feeds)
