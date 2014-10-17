@@ -171,6 +171,15 @@ module NBlog
       end
       redirect back
     end
+    
+    post '/delete' do
+      redirect(to('/')) unless logged_in?
+      unless params[:post_id].empty?
+        NBlog.db.execute("DELETE FROM posts WHERE id=?;", [params[:post_id]])
+        session[:flash] = "Successfully deleted post."
+      end
+      redirect '/'
+    end
 
     # @method get_login
     # Gets the login page which shows a nice login form.
