@@ -78,6 +78,22 @@ describe "nblog" do
       session.visit "/"
       expect(session).to have_content("[l] #{updated_text}")
     end
+    
+    it "should publish a post with multiple links and more" do
+      text = "I really love [this site](http://example.com), especially when it comes _to [this](http://example.com/LOL)_."
+      stripped =  "I really love this site, especially when it comes to this."
+      
+      session.visit "/"
+      session.fill_in "What's happening?", with: text
+      session.click_button "Publish"
+      
+      expect(session).to have_content("[l] #{stripped}")
+    end
+  
+    it "should see the RSS feed title with the HTML tags stripped" do
+      session.visit "/feed.xml"
+      expect(session.find(:xpath, "//item[1]/title")).to have_text("I really love this site, especially when it comes to this.")
+    end
   end
 end
 
