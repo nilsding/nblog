@@ -1,6 +1,9 @@
-0.1.2 (???)
-  * fixed RSS feed
+0.1.2 (2014-10-17)
+  * fixed RSS feed (internal server error and stripped HTML tags correctly for
+    the item title)
   + added classes to some elements to make creating stylesheets a bit easier
+  + added ability to delete posts
+  * more tests
 
 0.1.1 (2014-10-12)
   + delete users via manage.rb
