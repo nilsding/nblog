@@ -13,6 +13,6 @@ s.parse "add-user test secret"
 Capybara.app = NBlog::Application
 Capybara.ignore_hidden_elements = false
 
-RSpec.configure do |c| 
+RSpec.configure do |c|
   c.include Capybara::DSL
 end

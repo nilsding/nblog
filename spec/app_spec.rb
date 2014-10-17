@@ -94,6 +94,20 @@ describe "nblog" do
       session.visit "/feed.xml"
       expect(session.find(:xpath, "//item[1]/title")).to have_text("I really love this site, especially when it comes to this.")
     end
+    
+    it "should delete a post" do
+      text = "I really love this site"
+      
+      session.visit "/"
+      expect(session).to have_content("[l] #{text}")
+      session.click_link "[e]", match: :first
+      
+      expect(session.current_url).to match(/\/edit$/)
+      session.click_button "Delete"
+      
+      session.visit "/"
+      expect(session).not_to have_content("[l] #{text}")
+    end
   end
 end
 
