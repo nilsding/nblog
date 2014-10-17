@@ -11,6 +11,7 @@ require "haml"
 require "yaml"
 require "json"
 require "redcarpet"
+require "nokogiri"
 
 # nblog main module.
 module NBlog
@@ -112,7 +113,7 @@ module NBlog
         Rack::Utils.escape_html(text)
       end
       def strip_tags(text)
-        text.gsub(/\<.+\>(.*)\<\/.+\>/, '\1')
+        Nokogiri::HTML(text).text
       end
     end
 

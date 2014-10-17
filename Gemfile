@@ -10,6 +10,7 @@ gem "yard"
 gem "redcarpet"
 gem "rake"
 gem "json"
+gem "nokogiri"
 
 group :development do
   gem "shotgun"

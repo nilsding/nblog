@@ -69,6 +69,7 @@ DEPENDENCIES
   haml
   highline
   json
+  nokogiri
   rack-test
   rake
   redcarpet
