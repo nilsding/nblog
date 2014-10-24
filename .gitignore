@@ -2,6 +2,7 @@
 config.yml
 doc/
 .yardoc/
+coverage/
 *.swp
 *.kate-swp
 *~
