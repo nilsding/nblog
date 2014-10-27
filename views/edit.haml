@@ -1,16 +1,18 @@
-%h2.edit-post Edit post
+.edit-post
+  %h2 Edit post
 
-%form.edit-post{action: "/update", method: "POST"}
-  %textarea{name: "text", placeholder: "What's happening?", rows: 2, cols: 40}= @p["content_md"]
-  %br/
-  %input{type: "hidden", name: "post_id", value: @p["id"]}
-  %button{type: "submit"} Update
+  %form{action: "/update", method: "POST"}
+    %textarea{name: "text", placeholder: "What's happening?", rows: 2, cols: 40}= @p["content_md"]
+    %br/
+    %input{type: "hidden", name: "post_id", value: @p["id"]}
+    %button{type: "submit"} Update
 
-%h3.danger-zone Danger Zone™
+.danger-zone
+  %h3 Danger Zone™
 
-%form.danger-zone{action: "/delete", method: "POST"}
-  %input{type: "hidden", name: "post_id", value: @p["id"]}
-  %button{type: "submit"} Delete post
+  %form{action: "/delete", method: "POST"}
+    %input{type: "hidden", name: "post_id", value: @p["id"]}
+    %button{type: "submit"} Delete post
 
 .centre
   %p

@@ -1,9 +1,14 @@
 .right.nav
+  %a{href: "/"} Posts
+  %span.seperator
+    |
   %a{href: "/feed.xml"} RSS
-  %span.seperator |
+  %span.seperator 
+    |
   - if logged_in?
     %a{href: "/admin"} Admin
-    %span.seperator |
+    %span.seperator 
+      |
     %form{action: "/logout", method: "POST", style: "display: inline"}
       %a{href: "#", onclick: "this.parentNode.submit()"} Logout
     %br/

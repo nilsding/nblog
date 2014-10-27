@@ -1,6 +1,7 @@
 - if logged_in?
-  %h2 New post
-  %form.compose-form{action: "/compose", method: "POST"}
-    %textarea{name: "text", placeholder: "What's happening?", rows: 2, cols: 40}
-    %br/
-    %button{type: "submit"} Publish
+  .new-post
+    %h2 New post
+    %form.compose-form{action: "/compose", method: "POST"}
+      %textarea{name: "text", placeholder: "What's happening?", rows: 2, cols: 40}
+      %br/
+      %button{type: "submit"} Publish
