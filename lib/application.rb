@@ -93,7 +93,7 @@ module NBlog
             "content" => nil,
             "date" => Time.at(0),
             "url" => "/p/#{id}",
-            "created_by" => row[3]
+            "created_by" => 1
           }
         end
       end
@@ -138,6 +138,7 @@ module NBlog
     # Gets the posts.
     get "/p/:id.?:format?" do
       @p = post params[:id]
+      halt 404 if @p["id"] == -1
       unless params[:format].nil?
         case params[:format].downcase
         when "yml", "yaml"
@@ -163,7 +164,7 @@ module NBlog
     
     post '/update' do
       redirect(to('/')) unless logged_in?
-      unless params[:text].empty? or params[:post_id].empty?
+      unless params[:text].strip.empty? or params[:post_id].empty?
         NBlog.db.execute("UPDATE posts SET content=? WHERE id=?;", [params[:text].strip, params[:post_id]])
         session[:flash] = "Successfully updated post."
       else
@@ -222,7 +223,7 @@ module NBlog
     # Creates a new post.
     post "/compose" do
       redirect(to('/')) unless logged_in?
-      unless params[:text].empty?
+      unless params[:text].strip.empty?
         NBlog.db.execute("INSERT INTO posts (content, created_at, created_by) VALUES (?, ?, ?);", [params[:text].strip, Time.now.strftime("%s"), session[:user][:id]])
         session[:flash] = "Successfully published post."
       else

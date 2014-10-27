@@ -28,6 +28,12 @@ describe "nblog" do
     
     expect(page).to have_content("404")
   end
+  
+  it "should display the about page" do
+    visit "/about"
+    
+    expect(page).to have_content("About")
+  end
 
   context "user" do
     session = Capybara::Session.new(:rack_test, NBlog::Application)
@@ -142,6 +148,11 @@ describe "nblog" do
     it "should get the post in JSON format" do
       session.visit "/p/1.json"
       expect(session).to have_content("{\"id\":1,")
+    end
+    
+    it "should return a 404 error if a post was not found" do
+      session.visit "/p/12357832"
+      expect(session.status_code).to be(404)
     end
   end
 end
