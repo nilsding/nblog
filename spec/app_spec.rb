@@ -21,6 +21,13 @@ describe "nblog" do
     visit "/?css=%20%20%20%20"
     expect(page).to have_xpath("//link[@rel='stylesheet' and @href='/assets/style.css']")
   end
+  
+  it "should display a 404 page when a site was not found" do
+    visit "/this-page-does-not-exist"
+    expect(page.status_code).to be(404)
+    
+    expect(page).to have_content("404")
+  end
 
   context "user" do
     session = Capybara::Session.new(:rack_test, NBlog::Application)
@@ -61,6 +68,16 @@ describe "nblog" do
       session.click_button "Publish"
 
       expect(session).to have_content("[l] #{text}")
+    end
+    
+    it "should not be able to publish an empty post" do
+      text = "            "
+
+      session.visit "/"
+      session.fill_in "What's happening?", with: text
+      session.click_button "Publish"
+
+      expect(session).to have_content("Post cannot be empty")
     end
 
     it "should edit a new post" do
@@ -107,6 +124,24 @@ describe "nblog" do
 
       session.visit "/"
       expect(session).not_to have_content("[l] #{text}")
+    end
+    
+    it "should view a post" do
+      session.visit "/"
+      session.click_link "[l]", match: :first
+      
+      expect(session.current_url).to match(/\/p\/\d+$/)
+      expect(session).to have_content("View post")
+    end
+    
+    it "should get the post in YAML format" do
+      session.visit "/p/1.yml"
+      expect(session).to have_content("---\nid: 1")
+    end
+    
+    it "should get the post in JSON format" do
+      session.visit "/p/1.json"
+      expect(session).to have_content("{\"id\":1,")
     end
   end
 end
