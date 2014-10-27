@@ -1,15 +1,31 @@
 article {
   display: inline;
 }
+
 .centre {
   text-align: center;
 }
+
 .right {
   float: right;
   text-align: right;
 }
+
 .alert {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   background-color: rgba(1, 0, 0, 0.2);
+}
+
+.danger-zone {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border: 2px #ff0000 dashed;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.danger-zone h3 {
+  margin-top: 0px;
 }
