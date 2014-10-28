@@ -23,6 +23,10 @@ module NBlog
     ##
     # Simple REPL.
     def repl
+      trap 'INT' do
+        puts
+        exit 0
+      end
       @repl_active = true
       while @repl_active
         begin
