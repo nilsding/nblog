@@ -8,7 +8,7 @@
     <pubDate><%= Time.now.rfc822 %></pubDate>
     <lastBuildDate><%= Time.now.rfc822 %></lastBuildDate>
     <generator><%= NBLOG_VERSION %></generator>
-<% for post in posts %>
+<% for post in recent_posts %>
     <item>
       <title><%= strip_tags post["content"].split("\n")[0] %></title>
         <description><![CDATA[<%= post["content"] %>]]></description>

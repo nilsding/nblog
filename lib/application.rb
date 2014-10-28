@@ -100,15 +100,24 @@ module NBlog
       
       # Gets the most recent posts.
       # @return An array containing dicts with the keys +:id+, +:content+, +:date+ and :+url+.
-      def posts
+      def recent_posts
         posts = []
         NBlog.db.execute("SELECT id FROM posts ORDER BY id DESC LIMIT ?;", [NBlog.config['posts_per_page']]) do |row|
           posts << post(row[0])
         end
         posts
       end
+      
+      # Groups the +posts+ per day.
       def group_per_day(posts)
+        retary = {}
+        posts.each do |post|
+          retary[post["date"].strftime("%F")] ||= []
+          retary[post["date"].strftime("%F")] << post
+        end
+        retary
       end
+      
       def h(text)
         Rack::Utils.escape_html(text)
       end

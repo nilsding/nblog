@@ -2,11 +2,14 @@
 
 %h2 Posts
 
-%ul.posts
-  - for post in posts
-    %li.post
-      %span.controls
-        - if !session[:user].nil? and post["created_by"] == session[:user][:id]
-          %a{href: post["url"] + "/edit"} [e]
-        %a{href: post["url"]} [l]
-      = post["content"]
+- for date, posts in group_per_day(recent_posts)
+  .posts-day
+    %h3= date
+    %ul.posts
+      - for post in posts
+        %li.post
+          %span.controls
+            - if !session[:user].nil? and post["created_by"] == session[:user][:id]
+              %a{href: post["url"] + "/edit"} [e]
+            %a{href: post["url"]} [l]
+          = post["content"]

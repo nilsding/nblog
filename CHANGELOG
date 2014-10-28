@@ -1,3 +1,6 @@
+0.1.4 (2014-1?-??)
+  + posts are now grouped by days
+
 0.1.3 (2014-10-27)
   + added simplecov for testing
   + added "Posts" to the navigation bar
