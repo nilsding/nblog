@@ -42,7 +42,7 @@ prompted to enter a password.
 
 ## Personal TODO list
 
-* Pagination
+* **Pagination**
 * Streaming API (maybe?)
 * add ability to subscribe to friends via RSS feeds
 * Database migration
