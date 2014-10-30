@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
-$:.unshift File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
-require "interactiveshell"
+require 'interactiveshell'
 
 NBlog::InteractiveShell.new ARGV

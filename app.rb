@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # nblog - simple microblogging thing
 
-$:.unshift File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
-require "application"
+require 'application'
 
-NBlog::Application.run! if __FILE__ == $0
+NBlog::Application.run! if __FILE__ == $PROGRAM_NAME
