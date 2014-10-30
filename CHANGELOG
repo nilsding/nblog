@@ -1,5 +1,6 @@
-0.1.4 (2014-1?-??)
+0.1.4 (2014-10-30)
   + posts are now grouped by days
+  + added (basic) pagination!
 
 0.1.3 (2014-10-27)
   + added simplecov for testing
