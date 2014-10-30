@@ -99,10 +99,14 @@ module NBlog
       end
       
       # Gets the most recent posts.
+      # @param page [Integer] The page to get (1-based)
       # @return An array containing dicts with the keys +:id+, +:content+, +:date+ and :+url+.
-      def recent_posts
+      def recent_posts(page = 1)
         posts = []
-        NBlog.db.execute("SELECT id FROM posts ORDER BY id DESC LIMIT ?;", [NBlog.config['posts_per_page']]) do |row|
+        NBlog.db.execute("SELECT id FROM posts ORDER BY id DESC LIMIT ? OFFSET ?;", 
+                         [NBlog.config['posts_per_page'],
+                          NBlog.config['posts_per_page'] * (page - 1)]
+                        ) do |row|
           posts << post(row[0])
         end
         posts
@@ -118,9 +122,16 @@ module NBlog
         retary
       end
       
+      # Returns the amount of maximum pages. (1-based)
+      # @return [Integer] Page count
+      def max_pages()
+        NBlog.db.execute("SELECT COUNT(id) / ? FROM posts;", [NBlog.config['posts_per_page']])[0][0] + 1
+      end
+      
       def h(text)
         Rack::Utils.escape_html(text)
       end
+      
       def strip_tags(text)
         Nokogiri::HTML(text).text
       end
@@ -140,11 +151,24 @@ module NBlog
         session[:flash] = nil
       end
       @page = "index"
+      @current_page = 1
       haml :index
     end
 
+    # @method get_posts_page
+    # Gets the posts for page +:page+.
+    get "/!:page" do
+      unless session[:flash].nil?
+        @message = session[:flash]
+        session[:flash] = nil
+      end
+      @page = "index"
+      @current_page = params[:page].to_i
+      haml :index
+    end
+    
     # @method get_post
-    # Gets the posts.
+    # Gets a post.
     get "/p/:id.?:format?" do
       @p = post params[:id]
       halt 404 if @p["id"] == -1

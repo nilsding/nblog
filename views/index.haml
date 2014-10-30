@@ -2,7 +2,7 @@
 
 %h2 Posts
 
-- for date, posts in group_per_day(recent_posts)
+- for date, posts in group_per_day(recent_posts(@current_page))
   .posts-day
     %h3= date
     %ul.posts
@@ -13,3 +13,5 @@
               %a{href: post["url"] + "/edit"} [e]
             %a{href: post["url"]} [l]
           = post["content"]
+
+= haml :_pagination
