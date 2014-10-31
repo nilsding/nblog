@@ -1,8 +1,8 @@
 .pagination
   %span.older
-    - if @current_page + 1 < max_pages
+    - if @current_page < max_pages
       %a{href: "/!#{@current_page + 1}"} older entries
-  - if @current_page > 1 and @current_page + 1 < max_pages
+  - if @current_page > 1 && @current_page < max_pages
     %span.seperator
       |
   %span.newer
