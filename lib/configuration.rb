@@ -26,7 +26,7 @@ module NBlog
                                   ':memory:'
                                 else
                                   File.expand_path(
-                                    "../../#{@@config['dbfile']}", __FILE__)
+                                    "../../#{@config['dbfile']}", __FILE__)
                                 end)
   # TODO: check if database was initialized
 end
