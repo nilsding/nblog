@@ -2,7 +2,7 @@ require 'sqlite3'
 require 'yaml'
 
 # nblog version string
-NBLOG_VERSION = 'nblog 0.1.4'
+NBLOG_VERSION = 'nblog 0.1.5'
 
 # nblog main module.
 module NBlog
