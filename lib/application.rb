@@ -69,7 +69,11 @@ module NBlog
                           else
                             params[:css].gsub(/[\\<>&"']/, '').strip
                           end
-        session[:style].nil? ? '/style.css' : session[:style]
+        if session[:style].nil? 
+          NBlog.config['default_stylesheet']
+        else
+          session[:style]
+        end
       end
 
       # Gets a post

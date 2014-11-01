@@ -8,3 +8,4 @@ posts_per_page: 25
 dbfile: "./nblog.db"
 secret: "you_should_change_this_to_something_unpredictable"
 
+default_stylesheet: "/style.css"

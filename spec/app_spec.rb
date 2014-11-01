@@ -20,8 +20,8 @@ describe 'nblog' do
                                "@href='#{cssfile}']")
 
     visit '/?css=%20%20%20%20'
-    expect(page).to have_xpath('//link[@rel=\'stylesheet\' and ' \
-                               '@href=\'/assets/style.css\']')
+    expect(page).to have_xpath('//link[@rel=\'stylesheet\' and @' \
+                               "href='#{NBlog.config['default_stylesheet']}']")
   end
 
   it 'should display a 404 page when a site was not found' do
