@@ -69,7 +69,7 @@ module NBlog
                           else
                             params[:css].gsub(/[\\<>&"']/, '').strip
                           end
-        session[:style].nil? ? '/assets/style.css' : session[:style]
+        session[:style].nil? ? '/style.css' : session[:style]
       end
 
       # Gets a post
