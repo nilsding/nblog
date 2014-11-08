@@ -8,5 +8,5 @@ RSpec::Core::RakeTask.new do |task|
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.files   = ['*.rb', 'lib/*.rb', '-', '*.md']
+  t.files   = %w(*.rb lib/*.rb lib/*/*.rb - *.md)
 end
