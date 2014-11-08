@@ -10,9 +10,8 @@ module NBlog
     # Sets or unsets the user-defined style sheet.
     # @return Path to the stylesheet
     def stylesheet
-      params[:css] = '' unless params[:css]
-      session[:style] = safe_stylesheet params[:css]
-      real_stylesheet session[:style]
+      session[:style] = safe_stylesheet
+      real_stylesheet
     end
 
     # Gets a post
@@ -82,15 +81,19 @@ module NBlog
       }
     end
 
-    def safe_stylesheet(css)
-      if css.strip.empty?
+    def safe_stylesheet(css = params[:css])
+      if css.nil?
         session[:style]
       else
-        css.gsub(/[\\<>&"']/, '').strip
+        if css.strip.empty?
+          nil
+        else
+          css.gsub(/[\\<>&"']/, '').strip
+        end
       end
     end
 
-    def real_stylesheet(style)
+    def real_stylesheet(style = session[:style])
       if style.nil?
         NBlog.config['default_stylesheet']
       else
