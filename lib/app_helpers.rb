@@ -1,4 +1,5 @@
 module NBlog
+  # module containing some helpers for NBlog
   module Helpers
     #
     # @return +true+ or +false+, depending on whether an user is signed in
@@ -10,16 +11,8 @@ module NBlog
     # @return Path to the stylesheet
     def stylesheet
       params[:css] = '' unless params[:css]
-      session[:style] = if params[:css].strip.empty?
-                          nil
-                        else
-                          params[:css].gsub(/[\\<>&"']/, '').strip
-                        end
-      if session[:style].nil?
-        NBlog.config['default_stylesheet']
-      else
-        session[:style]
-      end
+      session[:style] = safe_stylesheet params[:css]
+      real_stylesheet session[:style]
     end
 
     # Gets a post
@@ -29,22 +22,10 @@ module NBlog
     def post(id)
       row = NBlog.db.execute('SELECT id, content, created_at, created_by ' \
                                'FROM posts WHERE id=? LIMIT 1;', [id])[0]
-      {
-          'id' => row[0],
-          'content' => $markdown.render_(row[1]),
-          'content_md' => row[1],
-          'date' => Time.at(row[2]),
-          'url' => "/p/#{row[0]}",
-          'created_by' => row[3]
-      }
+
+      post_hash row[0], row[1], Time.at(row[2]), row[3]
     rescue NoMethodError, SQLite3::SQLException
-      {
-          'id' => -1,
-          'content' => nil,
-          'date' => Time.at(0),
-          'url' => "/p/#{id}",
-          'created_by' => 1
-      }
+      post_hash
     end
 
     # Gets the most recent posts.
@@ -86,6 +67,35 @@ module NBlog
 
     def strip_tags(text)
       Nokogiri::HTML(text).text
+    end
+
+    private
+
+    def post_hash(id = -1, content = '', date = Time.at(0), created_by = 1)
+      {
+        'id' => id,
+        'content' => $markdown.render_(content),
+        'content_md' => content,
+        'date' => date,
+        'url' => "/p/#{id}",
+        'created_by' => created_by
+      }
+    end
+
+    def safe_stylesheet(css)
+      if css.strip.empty?
+        session[:style]
+      else
+        css.gsub(/[\\<>&"']/, '').strip
+      end
+    end
+
+    def real_stylesheet(style)
+      if style.nil?
+        NBlog.config['default_stylesheet']
+      else
+        style
+      end
     end
   end
 end
