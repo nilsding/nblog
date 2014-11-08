@@ -1,3 +1,5 @@
+require 'markdown_renderer'
+
 module NBlog
   # module containing some helpers for NBlog
   module Helpers
@@ -73,7 +75,7 @@ module NBlog
     def post_hash(id = -1, content = '', date = Time.at(0), created_by = 1)
       {
         'id' => id,
-        'content' => $markdown.render_(content),
+        'content' => MarkdownRenderer.render(content),
         'content_md' => content,
         'date' => date,
         'url' => "/p/#{id}",

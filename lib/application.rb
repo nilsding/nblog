@@ -10,7 +10,6 @@ require 'sinatra/base'
 require 'haml'
 require 'yaml'
 require 'json'
-require 'redcarpet'
 require 'nokogiri'
 
 require 'app_helpers'
@@ -18,32 +17,6 @@ require 'post_controller'
 
 # nblog main module.
 module NBlog
-  # Redcarpet HTML renderer for NBlog.
-  class NBlogRenderer < Redcarpet::Render::HTML
-    def header(text, _header_level)
-      "<p>#{text}</p>"
-    end
-
-    def raw_html(raw_html)
-      Rack::Utils.escape_html raw_html
-    end
-  end
-
-  $markdown = Redcarpet::Markdown.new(NBlogRenderer,
-                                      no_intra_emphasis: true,
-                                      fenced_code_blocks: true,
-                                      strikethrough: true,
-                                      autolink: true,
-                                      filter_html: true,
-                                      tables: true)
-
-  # Renders the page without the first <p> tag.
-  def $markdown.render_(md)
-    retstr = render(md)
-    2.times { retstr.sub!(/<\/?p>/, '') }
-    retstr
-  end
-
   # nblog Sinatra application.
   class Application < Sinatra::Base
     use Rack::Session::Pool, expire_after: 2592000
